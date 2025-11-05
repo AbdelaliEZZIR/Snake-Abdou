@@ -31,7 +31,7 @@ const GameOverlay: React.FC<GameOverlayProps> = ({ gameState, score, topScore, o
     <div className={`absolute inset-0 ${theme.colors.overlayBg} flex flex-col items-center justify-center text-center p-4 rounded-b-sm`}>
       {gameState === GameState.START && (
           <>
-            <h1 className={`text-5xl md:text-6xl font-bold mb-2 ${theme.colors.overlayTitle}`}>ABDOU SNAKE</h1>
+            <h1 className={`text-5xl md:text-6xl font-bold mb-2 ${theme.colors.overlayTitle}`}>SNAKE ABDOU</h1>
           </>
       )}
 
