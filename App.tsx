@@ -4,6 +4,7 @@ import { BOARD_SIZE, SPEED_LEVELS, SPEED_INCREMENT, MIN_SPEED_MS } from './const
 import { themes } from './themes';
 import GameBoard from './components/GameBoard';
 import GameOverlay from './components/GameOverlay';
+import MobileControls from './components/MobileControls';
 import useInterval from './hooks/useInterval';
 import { playEatSound, playGameOverSound, playClickSound } from './sounds';
 
@@ -40,8 +41,13 @@ const App: React.FC = () => {
   const [speedLevel, setSpeedLevel] = useState<SpeedLevel>('Average');
   const [themeIndex, setThemeIndex] = useState(0);
   const [isEating, setIsEating] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   const currentTheme = themes[themeIndex];
+
+  useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
 
   const cycleTheme = () => {
     playClickSound();
@@ -85,6 +91,19 @@ const App: React.FC = () => {
         resumeGame();
     }
   };
+  
+  const handleDirectionChange = (newDirection: Direction) => {
+    if (gameState !== GameState.PLAYING) return;
+    
+    if (
+      (newDirection === Direction.UP && direction !== Direction.DOWN) ||
+      (newDirection === Direction.DOWN && direction !== Direction.UP) ||
+      (newDirection === Direction.LEFT && direction !== Direction.RIGHT) ||
+      (newDirection === Direction.RIGHT && direction !== Direction.LEFT)
+    ) {
+      setDirection(newDirection);
+    }
+  };
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     e.preventDefault();
@@ -98,20 +117,20 @@ const App: React.FC = () => {
     let newDirection: Direction | null = null;
     switch (e.key) {
       case 'ArrowUp':
-        if (direction !== Direction.DOWN) newDirection = Direction.UP;
+        newDirection = Direction.UP;
         break;
       case 'ArrowDown':
-        if (direction !== Direction.UP) newDirection = Direction.DOWN;
+        newDirection = Direction.DOWN;
         break;
       case 'ArrowLeft':
-        if (direction !== Direction.RIGHT) newDirection = Direction.LEFT;
+        newDirection = Direction.LEFT;
         break;
       case 'ArrowRight':
-        if (direction !== Direction.LEFT) newDirection = Direction.RIGHT;
+        newDirection = Direction.RIGHT;
         break;
     }
     if (newDirection !== null) {
-      setDirection(newDirection);
+      handleDirectionChange(newDirection);
     }
   }, [direction, gameState, speed, pausedSpeed]);
 
@@ -215,6 +234,13 @@ const App: React.FC = () => {
               onSpeedChange={setSpeedLevel}
               theme={currentTheme}
             />
+            {isTouchDevice && (gameState === GameState.PLAYING || gameState === GameState.PAUSED) && (
+              <MobileControls 
+                onDirectionChange={handleDirectionChange} 
+                theme={currentTheme}
+                gameState={gameState}
+              />
+            )}
           </div>
       </div>
     </div>

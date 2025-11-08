@@ -18,6 +18,8 @@ export interface Theme {
     speedButtonSelectedBg: string;
     speedButtonSelectedText: string;
     speedButtonSelectedRing: string;
+    mobileControlsBg: string;
+    mobileControlsIcon: string;
   };
 }
 
@@ -42,6 +44,8 @@ export const themes: Theme[] = [
       speedButtonSelectedBg: 'bg-yellow-400',
       speedButtonSelectedText: 'text-green-900',
       speedButtonSelectedRing: 'ring-yellow-200',
+      mobileControlsBg: 'bg-green-900/50',
+      mobileControlsIcon: 'text-yellow-200/80',
     }
   },
   {
@@ -64,6 +68,8 @@ export const themes: Theme[] = [
       speedButtonSelectedBg: 'bg-teal-400',
       speedButtonSelectedText: 'text-indigo-900',
       speedButtonSelectedRing: 'ring-teal-200',
+      mobileControlsBg: 'bg-indigo-950/50',
+      mobileControlsIcon: 'text-teal-200/80',
     }
   },
   {
@@ -86,6 +92,8 @@ export const themes: Theme[] = [
       speedButtonSelectedBg: 'bg-cyan-400',
       speedButtonSelectedText: 'text-slate-900',
       speedButtonSelectedRing: 'ring-cyan-200',
+      mobileControlsBg: 'bg-slate-800/50',
+      mobileControlsIcon: 'text-cyan-200/80',
     }
   },
   {
@@ -108,6 +116,8 @@ export const themes: Theme[] = [
       speedButtonSelectedBg: 'bg-orange-400',
       speedButtonSelectedText: 'text-red-900',
       speedButtonSelectedRing: 'ring-orange-200',
+      mobileControlsBg: 'bg-red-950/50',
+      mobileControlsIcon: 'text-orange-200/80',
     }
   }
 ];
