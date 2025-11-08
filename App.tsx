@@ -7,7 +7,6 @@ import GameBoard from './components/GameBoard';
 import GameOverlay from './components/GameOverlay';
 import useInterval from './hooks/useInterval';
 import { playEatSound, playGameOverSound, playClickSound } from './sounds';
-import MobileControls from './components/MobileControls';
 
 const getRandomCoords = (snake: Coords[] = []): Coords => {
   let newFoodPosition: Coords;
@@ -263,7 +262,6 @@ const App: React.FC = () => {
               onSpeedChange={setSpeedLevel}
               theme={currentTheme}
             />
-             {gameState === GameState.PLAYING && <MobileControls onDirectionChange={handleDirectionChange} theme={currentTheme} />}
           </div>
       </div>
     </div>
