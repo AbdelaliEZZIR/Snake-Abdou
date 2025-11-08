@@ -1,10 +1,10 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { GameState, Direction, Coords, SpeedLevel } from './types';
 import { BOARD_SIZE, SPEED_LEVELS, SPEED_INCREMENT, MIN_SPEED_MS } from './constants';
 import { themes } from './themes';
 import GameBoard from './components/GameBoard';
 import GameOverlay from './components/GameOverlay';
-import MobileControls from './components/MobileControls';
 import useInterval from './hooks/useInterval';
 import { playEatSound, playGameOverSound, playClickSound } from './sounds';
 
@@ -41,13 +41,10 @@ const App: React.FC = () => {
   const [speedLevel, setSpeedLevel] = useState<SpeedLevel>('Average');
   const [themeIndex, setThemeIndex] = useState(0);
   const [isEating, setIsEating] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [touchStart, setTouchStart] = useState<Coords | null>(null);
+
 
   const currentTheme = themes[themeIndex];
-
-  useEffect(() => {
-    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
-  }, []);
 
   const cycleTheme = () => {
     playClickSound();
@@ -134,6 +131,33 @@ const App: React.FC = () => {
     }
   }, [direction, gameState, speed, pausedSpeed]);
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (gameState !== GameState.PLAYING) return;
+    setTouchStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStart || gameState !== GameState.PLAYING) return;
+
+    const touchEnd = { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+    const dx = touchEnd.x - touchStart.x;
+    const dy = touchEnd.y - touchStart.y;
+    const minSwipeDistance = 30; // Minimum distance for a swipe to be registered
+
+    if (Math.abs(dx) > Math.abs(dy)) { // Horizontal swipe
+      if (Math.abs(dx) > minSwipeDistance) {
+        handleDirectionChange(dx > 0 ? Direction.RIGHT : Direction.LEFT);
+      }
+    } else { // Vertical swipe
+      if (Math.abs(dy) > minSwipeDistance) {
+        handleDirectionChange(dy > 0 ? Direction.DOWN : Direction.UP);
+      }
+    }
+
+    setTouchStart(null);
+  };
+
+
   useEffect(() => {
     if (gameState === GameState.PLAYING || gameState === GameState.PAUSED) {
       window.addEventListener('keydown', handleKeyDown);
@@ -201,7 +225,11 @@ const App: React.FC = () => {
 
   return (
     <div className={`w-screen h-screen flex items-center justify-center font-mono ${currentTheme.colors.background}`}>
-      <div className={`relative w-full max-w-[90vmin] aspect-square ${currentTheme.colors.border} border-8 rounded-lg shadow-2xl`}>
+      <div 
+        className={`relative w-full max-w-[90vmin] aspect-square ${currentTheme.colors.border} border-8 rounded-lg shadow-2xl`}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
           <div className={`${currentTheme.colors.header} p-2 flex justify-between items-center text-xl font-bold ${currentTheme.colors.text}`}>
               <div className="flex items-center gap-2">
                 <span>🍎</span>
@@ -234,13 +262,6 @@ const App: React.FC = () => {
               onSpeedChange={setSpeedLevel}
               theme={currentTheme}
             />
-            {isTouchDevice && (gameState === GameState.PLAYING || gameState === GameState.PAUSED) && (
-              <MobileControls 
-                onDirectionChange={handleDirectionChange} 
-                theme={currentTheme}
-                gameState={gameState}
-              />
-            )}
           </div>
       </div>
     </div>
