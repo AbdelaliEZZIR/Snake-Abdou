@@ -70,7 +70,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ snake, food, theme, isEating, gam
             gridColumn: food.x + 1,
             gridRow: food.y + 1,
         }}
-        className="flex items-center justify-center text-sm md:text-xl"
+        className="flex items-center justify-center text-xs md:text-xl"
       >
         🍎
       </div>
